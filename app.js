@@ -16,10 +16,15 @@ const errorState = document.getElementById('errorState');
 const lastUpdatedEl = document.getElementById('lastUpdated');
 const errorMessageEl = document.getElementById('errorMessage');
 const retryBtn = document.getElementById('retryBtn');
+const searchInput = document.getElementById('searchInput');
+
+// Store all entries for filtering
+let allEntries = [];
 
 // Event Listeners
 refreshBtn.addEventListener('click', fetchClosings);
 retryBtn.addEventListener('click', fetchClosings);
+searchInput.addEventListener('input', filterSchools);
 
 // Initial load
 fetchClosings();
@@ -55,11 +60,14 @@ async function fetchClosings() {
         // Update last updated time
         lastUpdatedEl.textContent = data.lastUpdated || 'Unknown';
 
+        // Store entries for filtering
+        allEntries = data.entries;
+
         // Display results
-        if (data.entries.length === 0) {
+        if (allEntries.length === 0) {
             showEmpty();
         } else {
-            displaySchools(data.entries);
+            displaySchools(allEntries);
         }
 
         // Remove loading state
@@ -85,6 +93,30 @@ function displaySchools(entries) {
         // Stagger animation
         card.style.animationDelay = `${index * 50}ms`;
     });
+}
+
+function filterSchools() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    if (!searchTerm) {
+        // Show all entries if search is empty
+        displaySchools(allEntries);
+        return;
+    }
+    
+    // Filter entries by school name or status
+    const filtered = allEntries.filter(entry => 
+        entry.Name.toLowerCase().includes(searchTerm) ||
+        entry.Status.toLowerCase().includes(searchTerm)
+    );
+    
+    if (filtered.length === 0) {
+        schoolList.innerHTML = '';
+        emptyState.style.display = 'flex';
+    } else {
+        emptyState.style.display = 'none';
+        displaySchools(filtered);
+    }
 }
 
 function createSchoolCard(entry) {
