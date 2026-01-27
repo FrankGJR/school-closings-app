@@ -101,8 +101,16 @@ self.addEventListener('fetch', event => {
                         return response;
                     })
                     .catch(() => {
-                        // Return offline page if available
-                        return caches.match('/index.html');
+                        // Return offline page if available, or a basic error response
+                        return caches.match('/index.html').then(fallback => {
+                            return fallback || new Response('Offline', {
+                                status: 503,
+                                statusText: 'Service Unavailable',
+                                headers: new Headers({
+                                    'Content-Type': 'text/plain'
+                                })
+                            });
+                        });
                     });
             })
     );
