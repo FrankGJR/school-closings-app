@@ -485,3 +485,15 @@ body {
         color: #fff;
     }
 }
+
+/* Flexbox for title row with SVG and text */
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.cardinal-svg {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
