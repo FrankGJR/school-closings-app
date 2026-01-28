@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'school-closings-v3';
+﻿const CACHE_NAME = 'school-closings-v4';
 const URLS_TO_CACHE = [
     '/',
     '/index.html',
