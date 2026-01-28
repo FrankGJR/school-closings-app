@@ -99,19 +99,19 @@ function displaySchools(entries) {
 
 function filterSchools() {
     const searchTerm = searchInput.value.toLowerCase().trim();
-    
+
     if (!searchTerm) {
         // Show all entries if search is empty
         displaySchools(allEntries);
         return;
     }
-    
+
     // Filter entries by school name or status
-    const filtered = allEntries.filter(entry => 
+    const filtered = allEntries.filter(entry =>
         entry.Name.toLowerCase().includes(searchTerm) ||
         entry.Status.toLowerCase().includes(searchTerm)
     );
-    
+
     if (filtered.length === 0) {
         schoolList.innerHTML = '';
         emptyState.style.display = 'flex';
@@ -147,9 +147,9 @@ function createSchoolCard(entry) {
                     <div class="school-status ${statusClass}">${escapeHtml(entry.Status)}</div>
                 </div>
             </div>
-            
+
             <div class="card-divider"></div>
-            
+
             <div class="card-details">
                 <div class="detail-item">
                     <svg class="detail-icon" viewBox="0 0 24 24" fill="currentColor">

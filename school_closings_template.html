@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Closings Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a3a52 0%, #0f2538 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: #ff4444;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cardinal-icon {
+            font-size: 4em;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #ff4444;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            color: #ff9999;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .refresh-notice {
+            background-color: #0f2538;
+            border: 2px solid #ff4444;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            color: #ff9999;
+            text-align: center;
+        }
+
+        .refresh-notice-title {
+            color: #ff4444;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .refresh-notice-instruction {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #cccccc;
+        }
+
+        .refresh-notice-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            color: #ff9999;
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1a3a52;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ff4444;
+        }
+
+        .data-table thead {
+            background-color: #0f2538;
+            color: #ff4444;
+            border-bottom: 2px solid #ff4444;
+        }
+
+        .data-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #2a4a62;
+            color: #cccccc;
+        }
+
+        .data-table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #2a4a62;
+        }
+
+        .data-table tr.closed {
+            background-color: rgba(255, 68, 68, 0.1);
+        }
+
+        .data-table tr.closed:hover {
+            background-color: rgba(255, 68, 68, 0.2);
+        }
+
+        .data-table tr.delayed {
+            background-color: rgba(255, 165, 0, 0.1);
+        }
+
+        .data-table tr.delayed:hover {
+            background-color: rgba(255, 165, 0, 0.2);
+        }
+
+        .data-table tr.open {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .data-table tr.open:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+
+        .status-badge.closed {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .status-badge.delayed {
+            background-color: #ffa500;
+            color: white;
+        }
+
+        .status-badge.open {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .source-badge {
+            background-color: #ff4444;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            background-color: #1a3a52;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            color: #ff9999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 2px solid #ff4444;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+        }
+
+        .footer {
+            text-align: center;
+            color: #ff9999;
+            margin-top: 30px;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .cardinal-icon {
+                font-size: 3em;
+            }
+
+            .data-table {
+                font-size: 0.9em;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="cardinal-icon">🐦</div>
+                <div>
+                    <h1>Cardinal Driving's School Closings Dashboard</h1>
+                    <p>Real-time closings and delays</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="refresh-notice">
+                <div class="refresh-notice-icon">📊</div>
+                <div class="refresh-notice-title">To Update School Closings Data</div>
+                <div class="refresh-notice-instruction">
+                    Re-run the <strong>RefreshSchoolClosings.bat</strong> batch file or execute the PowerShell script to fetch the latest data.
+                </div>
+            </div>
+            <div class="last-updated" id="lastUpdated">Loading...</div>
+        </div>
+
+        <div id="content">
+            <div class="empty-state">
+                <p>Loading data...</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Data from NBC Connecticut & WFSB | Updates when script runs</p>
+        </div>
+    </div>
+
+    <script>
+        // Data is embedded directly in this file by the PowerShell script
+        const dashboardData = @@JSON_DATA@@;
+
+        function getStatusClass(status) {
+            const lowerStatus = status.toLowerCase();
+            if (lowerStatus.includes('closed') || lowerStatus.includes('closure')) {
+                return 'closed';
+            } else if (lowerStatus.includes('delay') || lowerStatus.includes('delayed')) {
+                return 'delayed';
+            } else if (lowerStatus.includes('open')) {
+                return 'open';
+            }
+            return 'default';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function displayData() {
+            // Update last updated time
+            document.getElementById('lastUpdated').textContent =
+                `Last updated: ${dashboardData.lastUpdated}`;
+
+            if (!dashboardData.entries || dashboardData.entries.length === 0) {
+                document.getElementById('content').innerHTML = `
+                    <div class="empty-state">
+                        <p>✅ No closings or delays at this time</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Build table HTML
+            let html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>School/Organization</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            dashboardData.entries.forEach(entry => {
+                const statusClass = getStatusClass(entry.Status);
+                const rowClass = statusClass;
+                const statusDisplay = `<span class="status-badge ${statusClass}">${escapeHtml(entry.Status)}</span>`;
+                const sourceDisplay = `<span class="source-badge">${escapeHtml(entry.Source)}</span>`;
+
+                html += `
+                    <tr class="${rowClass}">
+                        <td><strong>${escapeHtml(entry.Name)}</strong></td>
+                        <td>${statusDisplay}</td>
+                        <td>${escapeHtml(entry.UpdateTime || 'Unknown')}</td>
+                        <td>${sourceDisplay}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('content').innerHTML = html;
+        }
+
+        // Load and display the data when page loads
+        window.addEventListener('DOMContentLoaded', displayData);
+        // Also try immediately in case DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', displayData);
+        } else {
+            displayData();
+        }
+    </script>
+</body>
+</html>
