@@ -296,16 +296,20 @@ body {
     color: #34C759;
 }
 
+
 .empty-state h2 {
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 8px;
-    color: #000;
+    color: #007AFF;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 .empty-state p {
     font-size: 16px;
-    color: #888;
+    color: #333;
+    font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 /* Error State */
@@ -459,12 +463,17 @@ body {
         color: #999;
     }
 
-    .empty-state p,
+    .empty-state h2 {
+        color: #4da3ff;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.18);
+    }
+    .empty-state p {
+        color: #fff;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.18);
+    }
     .error-state p {
         color: #999;
     }
-
-    .empty-state h2,
     .error-state h2 {
         color: #fff;
     }
