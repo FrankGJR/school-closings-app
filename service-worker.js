@@ -43,23 +43,8 @@ self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // API requests - always network, never cache
+    // Ignore API requests completely—let them go straight to the network
     if (url.hostname.includes('execute-api.amazonaws.com')) {
-        event.respondWith(
-            fetch(request)
-                .catch(() => {
-                    // If offline, return a 503 error
-                    return new Response(JSON.stringify({
-                        error: 'Offline - No cached data available'
-                    }), {
-                        status: 503,
-                        statusText: 'Service Unavailable',
-                        headers: new Headers({
-                            'Content-Type': 'application/json'
-                        })
-                    });
-                })
-        );
         return;
     }
 
