@@ -38,7 +38,9 @@ async function fetchClosings() {
         showLoading(true);
         hideStates();
 
-        const response = await fetch(API_URL, {
+        // Add a cache-busting query parameter to ensure a fresh response every time
+        const url = API_URL + (API_URL.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
