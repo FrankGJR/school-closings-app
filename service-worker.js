@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'school-closings-v2';
+﻿const CACHE_NAME = 'school-closings-v3';
 const URLS_TO_CACHE = [
     '/',
     '/index.html',
@@ -43,38 +43,21 @@ self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // API requests - network first
+    // API requests - always network, never cache
     if (url.hostname.includes('execute-api.amazonaws.com')) {
         event.respondWith(
             fetch(request)
-                .then(response => {
-                    if (response.ok) {
-                        // Cache successful API responses
-                        const responseClone = response.clone();
-                        caches.open(CACHE_NAME).then(cache => {
-                            cache.put(request, responseClone);
-                        });
-                    }
-                    return response;
-                })
                 .catch(() => {
-                    // Fall back to cache for API requests
-                    return caches.match(request)
-                        .then(cachedResponse => {
-                            if (cachedResponse) {
-                                return cachedResponse;
-                            }
-                            // Return offline page or error response
-                            return new Response(JSON.stringify({
-                                error: 'Offline - No cached data available'
-                            }), {
-                                status: 503,
-                                statusText: 'Service Unavailable',
-                                headers: new Headers({
-                                    'Content-Type': 'application/json'
-                                })
-                            });
-                        });
+                    // If offline, return a 503 error
+                    return new Response(JSON.stringify({
+                        error: 'Offline - No cached data available'
+                    }), {
+                        status: 503,
+                        statusText: 'Service Unavailable',
+                        headers: new Headers({
+                            'Content-Type': 'application/json'
+                        })
+                    });
                 })
         );
         return;
