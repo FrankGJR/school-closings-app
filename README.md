@@ -77,14 +77,19 @@ Open `index.html` in a browser or serve the folder with any static server.
 
 Push changes to `main`. GitHub Pages serves the latest build automatically.
 
-## AWS / API backend notes
+## AWS / API backend (high-level)
 
-This repo only contains the web app. The API and its AWS resources are not defined here, but the app expects:
+This repo only contains the web app, but the backend is hosted on AWS. High-level architecture:
 
-- API Gateway endpoint at `https://yr4zm4dy27.execute-api.us-east-1.amazonaws.com/Prod/`
-- Backend that returns the JSON shape shown above
+- **Lambda**: Main code that collects and formats the school closings data.
+- **EventBridge**: Scheduled trigger runs the Lambda every 15 minutes.
+- **S3**: Storage used by the Lambda (access granted via IAM roles/policies).
+- **IAM**: Roles and policies that allow Lambda to read/write S3.
+- **API Gateway**: HTTP GET endpoint exposes the Lambda output.
+  - Uses **Lambda proxy integration**.
+  - The app calls the API endpoint directly in `app.js`.
 
-If you want the README to include exact AWS configuration (API Gateway setup, IAM roles/policies, S3 buckets, or Lambda details), point me to the repo or document that defines those resources and I will add it precisely.
+The front end is hosted on GitHub Pages; updates are published by pushing to `main`.
 
 ## GitHub Pages configuration
 
