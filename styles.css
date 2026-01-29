@@ -40,18 +40,37 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    /* Ensure header content is centered */
 }
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     max-width: 800px;
     margin: 0 auto;
 }
 
 .header-text {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.cardinal-icon {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 40px;
 }
 
 .title {
