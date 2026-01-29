@@ -40,7 +40,7 @@ Expected JSON:
 flowchart TD
   A[User opens app] --> B[Load index.html]
   B --> C[app.js runs]
-  C --> D[Fetch API (network only)]
+  C --> D[Fetch API - network only]
   D -->|OK| E[Validate JSON]
   E -->|Valid| F[Update lastUpdated]
   F --> G[Store entries in memory]
@@ -76,6 +76,25 @@ Open `index.html` in a browser or serve the folder with any static server.
 ## Deployment (GitHub Pages)
 
 Push changes to `main`. GitHub Pages serves the latest build automatically.
+
+## AWS / API backend notes
+
+This repo only contains the web app. The API and its AWS resources are not defined here, but the app expects:
+
+- API Gateway endpoint at `https://yr4zm4dy27.execute-api.us-east-1.amazonaws.com/Prod/`
+- Backend that returns the JSON shape shown above
+
+If you want the README to include exact AWS configuration (API Gateway setup, IAM roles/policies, S3 buckets, or Lambda details), point me to the repo or document that defines those resources and I will add it precisely.
+
+## GitHub Pages configuration
+
+This project is a static site. Typical setup:
+
+- Branch: `main`
+- Folder: `/ (root)`
+- Custom domain: optional (not defined in this repo)
+
+If your Pages settings differ, tell me the exact values and I will document them.
 
 ## Troubleshooting
 
