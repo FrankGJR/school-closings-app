@@ -91,6 +91,17 @@ This repo only contains the web app, but the backend is hosted on AWS. High-leve
 
 The front end is hosted on GitHub Pages; updates are published by pushing to `main`.
 
+## AWS architecture diagram
+
+```mermaid
+flowchart LR
+  EB[EventBridge schedule\n(every 15 minutes)] --> L[Lambda function]
+  L --> S3[S3 bucket]
+  L --> APIGW[API Gateway\nGET + Lambda proxy integration]
+  APIGW --> WEB[Web app on GitHub Pages]
+  WEB --> APIGW
+```
+
 ## GitHub Pages configuration
 
 This project is a static site. Typical setup:
