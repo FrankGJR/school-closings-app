@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'school-closings-v13';
+const CACHE_NAME = 'school-closings-v14';
 const URLS_TO_CACHE = [
     '/',
     '/index.html',
@@ -43,7 +43,7 @@ self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Ignore API requests completely—let them go straight to the network
+    // Ignore API requests completely�let them go straight to the network
     if (url.hostname.includes('execute-api.amazonaws.com')) {
         return;
     }
