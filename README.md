@@ -95,7 +95,7 @@ The front end is hosted on GitHub Pages; updates are published by pushing to `ma
 
 ```mermaid
 flowchart LR
-  EB[EventBridge schedule\n(every 15 minutes)] --> L[Lambda function]
+  EB[EventBridge schedule (every 15 minutes)] --> L[Lambda function]
   L --> S3[S3 bucket]
   L --> APIGW[API Gateway\nGET + Lambda proxy integration]
   APIGW --> WEB[Web app on GitHub Pages]
