@@ -30,9 +30,9 @@ SCHOOL_FILTER = [
     'bridges of aces',
     'bristol public',
     'bristol schools',
-    'winstead public',
-    'winstead schools',
-    'canton pubic',
+    'winsted public',
+    'winsted schools',
+    'canton public',
     'canton schools'
 ]
 
