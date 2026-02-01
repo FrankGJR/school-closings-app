@@ -1,14 +1,21 @@
 import json
+import os
 import re
 import urllib.request
 import boto3
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-# AWS S3 client
+# AWS clients
 s3_client = boto3.client('s3')
+sns_client = boto3.client('sns')
+dynamodb = boto3.resource('dynamodb')
 BUCKET_NAME = 'cardinal-driving-school-closings'
 JSON_FILE_KEY = 'school_closings.json'
+STATE_TABLE = os.environ.get('STATE_TABLE', 'SchoolClosingsState')
+STATE_PK = 'state'
+SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN', 'arn:aws:sns:us-east-1:058264293996:SchoolClosingsAlerts')
+SITE_URL = 'https://frankgjr.github.io/school-closings-app/'
 
 # Eastern timezone
 EASTERN = ZoneInfo('America/New_York')
@@ -70,6 +77,67 @@ def get_eastern_time():
     """Get current time in Eastern timezone"""
     return datetime.now(EASTERN)
 
+def get_state_table():
+    return dynamodb.Table(STATE_TABLE)
+
+def load_state():
+    """Load storm notification state from DynamoDB"""
+    try:
+        resp = get_state_table().get_item(Key={'id': STATE_PK})
+        return resp.get('Item', {})
+    except Exception as e:
+        print(f"Error loading state: {str(e)}")
+        return {}
+
+def save_state(state):
+    """Save storm notification state to DynamoDB"""
+    try:
+        state['id'] = STATE_PK
+        get_state_table().put_item(Item=state)
+        return True
+    except Exception as e:
+        print(f"Error saving state: {str(e)}")
+        return False
+
+def should_reset_notification(state, now_eastern, reset_hours=4):
+    """Reset when there has been no data for reset_hours"""
+    last_nonempty = state.get('last_nonempty_time')
+    if not last_nonempty:
+        return True
+
+    try:
+        last_time = datetime.fromisoformat(last_nonempty)
+    except Exception:
+        return True
+
+    delta = now_eastern - last_time
+    return delta.total_seconds() >= reset_hours * 3600
+
+def send_notification(entries, last_updated):
+    """Send a one-time SNS email notification"""
+    if not SNS_TOPIC_ARN:
+        print("SNS_TOPIC_ARN not configured; skipping notification.")
+        return False
+
+    count = len(entries)
+    subject = "School Closings Alert"
+    message = (
+        f"School closings found: {count}\n"
+        f"Last updated: {last_updated}\n"
+        f"View the site: {SITE_URL}\n"
+    )
+
+    try:
+        sns_client.publish(
+            TopicArn=SNS_TOPIC_ARN,
+            Subject=subject,
+            Message=message
+        )
+        return True
+    except Exception as e:
+        print(f"Error sending SNS notification: {str(e)}")
+        return False
+
 
 def get_closings_from_source(url, source_name):
     """Fetch and parse closings from a source"""
@@ -85,7 +153,7 @@ def get_closings_from_source(url, source_name):
 
         if source_name == "WFSB":
             # WFSB pattern
-            pattern = r'<FONT\s+CLASS="orgname"[^>]*>(.*?)</FONT>[^:]*:\s*<FONT\s+CLASS="status"[^<]+</FONT>'
+            pattern = r'<FONT\s+CLASS="orgname"[^>]*>(.*?)</FONT>[^:]*:\s*<FONT\s+CLASS="status"[^>]*>([^<]+)</FONT>'
             matches = re.finditer(pattern, html_content, re.IGNORECASE | re.DOTALL)
 
             for match in matches:
@@ -181,13 +249,30 @@ def lambda_handler(event, context):
         print(f"Total entries found: {len(all_entries)}")
 
         # Create response data with Eastern time
+        now_eastern = get_eastern_time()
         json_data = {
-            'lastUpdated': get_eastern_time().strftime('%m/%d/%Y %I:%M:%S %p') + ' EST',
+            'lastUpdated': now_eastern.strftime('%m/%d/%Y %I:%M:%S %p') + ' EST',
             'entries': all_entries
         }
 
         # Try to upload to S3, but don't fail if it doesn't work
         upload_to_s3(json_data)
+
+        # Notification logic: one alert per storm, reset after 4 hours of no data
+        state = load_state()
+        notified = state.get('notified', False)
+
+        if len(all_entries) > 0:
+            state['last_nonempty_time'] = now_eastern.isoformat()
+            if not notified:
+                sent = send_notification(all_entries, json_data['lastUpdated'])
+                if sent:
+                    state['notified'] = True
+        else:
+            if notified and should_reset_notification(state, now_eastern, reset_hours=4):
+                state['notified'] = False
+
+        save_state(state)
 
         # Always return success with the data we have (even if empty)
         return {
