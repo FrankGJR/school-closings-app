@@ -246,6 +246,35 @@ def lambda_handler(event, context):
         # Combine all entries
         all_entries = nbc_entries + wfsb_entries
 
+        # Optional test hook: force a notification without changing state
+        if isinstance(event, dict) and event.get('forceTest') is True:
+            now_eastern = get_eastern_time()
+            test_data = {
+                'lastUpdated': now_eastern.strftime('%m/%d/%Y %I:%M:%S %p') + ' EST',
+                'entries': [
+                    {
+                        "Name": "Test School",
+                        "Status": "Closed (test)",
+                        "UpdateTime": now_eastern.strftime("%m/%d/%Y %I:%M:%S %p") + " EST",
+                        "Source": "Test Event"
+                    }
+                ]
+            }
+            send_notification(test_data['entries'], test_data['lastUpdated'])
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type,Accept',
+                    'Access-Control-Allow-Methods': 'GET,OPTIONS',
+                    'Cache-Control': 'no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                },
+                'body': json.dumps(test_data)
+            }
+
         print(f"Total entries found: {len(all_entries)}")
 
         # Create response data with Eastern time
