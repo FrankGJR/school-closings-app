@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Alerts Opt-In</title>
+    <meta name="description" content="SMS opt-in for Cardinal Driving School Closings alerts">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            background: #f5f5f5;
+            color: #111;
+        }
+        .card {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            margin: 0 0 12px 0;
+            font-size: 24px;
+        }
+        p {
+            margin: 0 0 16px 0;
+            line-height: 1.4;
+        }
+        label {
+            display: block;
+            margin: 12px 0 6px 0;
+            font-weight: 600;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .consent {
+            margin-top: 12px;
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 14px;
+        }
+        .checkbox {
+            margin-top: 12px;
+        }
+        .checkbox input {
+            margin-right: 8px;
+        }
+        .note {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>SMS Alerts Opt-In</h1>
+        <p>Use this form to opt in to Cardinal Driving School Closings SMS alerts.</p>
+
+        <label for="name">Name</label>
+        <input id="name" type="text" placeholder="Your name">
+
+        <label for="phone">Mobile number</label>
+        <input id="phone" type="tel" placeholder="+1 (555) 555-1234">
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox">
+                I agree to receive SMS alerts about school closings.
+            </label>
+        </div>
+
+        <div class="consent">
+            By providing my phone number and checking the box above, I agree to receive
+            SMS messages from Cardinal Driving about school closings. Message frequency varies.
+            Message and data rates may apply. Reply STOP to unsubscribe.
+        </div>
+
+        <div class="note">
+            This page is for SMS opt-in proof and does not submit data.
+        </div>
+    </div>
+</body>
+</html>
