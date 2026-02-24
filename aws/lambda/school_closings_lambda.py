@@ -39,9 +39,9 @@ SCHOOL_FILTER = [
     'bristol schools',
     'winsted public',
     'winsted schools',
-    'terryville',
+    'terryville public',
     'terryville schools',
-    'plymouth',
+    'plymouth public',
     'plymouth schools',
     'canton public',
     'canton schools'
